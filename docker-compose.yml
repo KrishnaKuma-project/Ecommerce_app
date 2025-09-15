@@ -191,7 +191,7 @@
 
     #admin_panel
     admin_panel:
-      build: ./damin_panel
+      build: ./admin_panel
       depends_on:
         db_admin:
           condition: service_healthy
@@ -200,7 +200,7 @@
       env_file:
         - ./admin_panel/.env
 
-    db_notifications:
+    db_admin:
       image: postgres:15
       environment:
         POSTGRES_USER: postgres
