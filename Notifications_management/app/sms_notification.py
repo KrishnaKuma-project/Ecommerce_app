@@ -8,12 +8,14 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from . import database, models
 
+load_dotenv()
+
 router = APIRouter()
 
-account_sid ="AC8c86885c8858eb2d7483b7097250ae2a"
-auth_token ="c8255d7d89e0d3f206cbb39f2d3bd509"
-TWILIO_PHONE ="+18573092042"
-
+account_sid=os.getenv("account_sid_env")
+auth_token = os.getenv("auth_token_env")
+TWILIO_PHONE = os.getenv("TWILIO-PHONE_ENV")
+     
 client = Client(account_sid, auth_token)
 
 def send_otp_sms(mobile: str, otp: str):
