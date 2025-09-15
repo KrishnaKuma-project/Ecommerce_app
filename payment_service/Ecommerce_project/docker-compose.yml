@@ -1,0 +1,227 @@
+  version: "3.9"
+
+  services:
+    # User management
+    user_management:
+      build: ./user_management
+      ports:
+        - "8000:8000"
+      depends_on:
+        - db_users
+      env_file:
+        - ./user_management/.env
+
+    db_users:
+      image: postgres:15
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: krishna2005
+        POSTGRES_DB: users_db
+      ports:
+        - "5432:5432"
+      volumes:
+        - user_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres -d users_db"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+
+    #Product catalog
+    product_catalog:
+      build: ./product_catalog
+      depends_on:
+        db_product:
+          condition: service_healthy
+      ports:
+        - "8001:8000"
+      env_file:
+        - ./product_catalog/.env
+
+    db_product:
+      image: postgres:15
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: krishna2005
+        POSTGRES_DB: product_db
+      ports:
+        - "5433:5432"
+      volumes:
+        - product_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+
+    #shopping cart
+    shopping_cart:
+      build: ./shopping_cart
+      depends_on:
+        db_cart:
+          condition: service_healthy
+      ports:
+        - "8002:8000"
+      env_file:
+        - ./shopping_cart/.env
+
+    db_cart:
+      image: postgres:15
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: krishna2005
+        POSTGRES_DB: cart_db
+      ports:
+        - "5434:5432"
+      volumes:
+        - cart_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+
+    #checkout
+    checkout:
+      build: ./checkout
+      depends_on:
+        db_cart:
+          condition: service_healthy
+      ports:
+        - "8003:8000"
+      env_file:
+        - ./checkout/.env
+
+    db_checkout:
+      image: postgres:15
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: krishna2005
+        POSTGRES_DB: checkout_db
+      ports:
+        - "5435:5432"
+      volumes:
+        - checkout_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+
+    #payment_service
+    payment_service:
+      build: ./payment_service
+      depends_on:
+        db_cart:
+          condition: service_healthy
+      ports:
+        - "8004:8000"
+      env_file:
+        - ./payment_service/.env
+
+    db_payment:
+      image: postgres:15
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: krishna2005
+        POSTGRES_DB: payment_db
+      ports:
+        - "5436:5432"
+      volumes:
+        - payment_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+
+    #order_management
+    order_management:
+      build: ./order_management 
+      depends_on:
+        db_cart:
+          condition: service_healthy
+      ports:
+        - "8005:8000"
+      env_file:
+        - ./order_management/.env
+
+    db_order:
+      image: postgres:15
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: krishna2005
+        POSTGRES_DB: order_db
+      ports:
+        - "5437:5432"
+      volumes:
+        - order_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+
+    #notification_management
+    notifications_management:
+      build: ./notifications_management
+      depends_on:
+        db_cart:
+          condition: service_healthy
+      ports:
+        - "8006:8000"
+      env_file:
+        - ./notifications_management/.env
+
+    db_notifications:
+      image: postgres:15
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: krishna2005
+        POSTGRES_DB: notifications_db
+      ports:
+        - "5438:5432"
+      volumes:
+        - notifications_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s  
+        timeout: 5s
+        retries: 10
+
+    #admin_panel
+    admin_panel:
+      build: ./damin_panel
+      depends_on:
+        db_admin:
+          condition: service_healthy
+      ports:
+        - "8007:8000"
+      env_file:
+        - ./admin_panel/.env
+
+    db_notifications:
+      image: postgres:15
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: krishna2005
+        POSTGRES_DB: admin_db
+      ports:
+        - "5439:5432"
+      volumes:
+        - admin_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s  
+        timeout: 5s
+        retries: 10
+
+  volumes:
+    user_db_data:
+    product_db_data:
+    cart_db_data:
+    checkout_db_data:
+    payment_db_data:
+    order_db_data:
+    notifications_db_data:
+    admin_db_data:

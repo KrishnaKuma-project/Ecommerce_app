@@ -1,0 +1,5 @@
+Client secret = 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
+
+creation date = September 9, 2025 at 6:12:59 PM GMT+5
+
+client id = 3270108047-nueg80ujcd0nps4g7iuhom2sr436ujpe.apps.googleusercontent.com
