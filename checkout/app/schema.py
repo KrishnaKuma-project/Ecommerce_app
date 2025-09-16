@@ -17,3 +17,6 @@ class remove_cart_after_order_schema (BaseModel):
 
 class order_cancel_helper_process_schema(BaseModel):
     order_id : int
+
+class admin_dashboard_helper(BaseModel):
+    email : str

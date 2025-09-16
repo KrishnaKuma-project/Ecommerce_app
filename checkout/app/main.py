@@ -1,11 +1,12 @@
 from fastapi import FastAPI, HTTPException,Depends
-from . import database, schema, models, order_tracking_helper, order_cancel_helper
+from . import database, schema, models, order_tracking_helper, order_cancel_helper,order_count
 import requests
 
 app = FastAPI()
 
 app.include_router(order_tracking_helper.router,tags=["Order tracker."])
 app.include_router(order_cancel_helper.router,tags=["Order Cancel."])
+app.include_router(order_count.router,tags=["Sales Data."])
 
 @app.on_event("startup")
 def startup():

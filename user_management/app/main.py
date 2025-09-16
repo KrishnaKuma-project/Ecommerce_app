@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
-from . import schema, database, models, password_hashing,password_change, user_profile_update
+from . import schema, database, models, google_login,password_hashing,password_change, user_profile_update
 import os
 import time
 
@@ -9,6 +9,7 @@ app = FastAPI()
 
 app.include_router(password_change.router, tags=["Password Change:"])
 app.include_router(user_profile_update.router, tags=["Profile Update:"])
+#app.include_router(google_login.router, tags=["google login."])
 
 # def create_tables_with_retry(retries=5, delay=5):
 #     for attempt in range(retries):
@@ -25,6 +26,14 @@ Login_status = []
 # @app.on_event("startup")
 # def on_startup():
 #     create_tables_with_retry()
+
+@app.post("/user-all_user_list")
+def all_user_list_helper(db=Depends(database.get_db)):
+    user_list = db.query(models.user_details).all()
+    if not user_list:
+        raise HTTPException(status_code=404, detail="User not found.")
+    
+    return user_list
 
 @app.get("/users/{email}")
 def get_user(email: str, db: Session = Depends(database.get_db)):
